@@ -6,5 +6,5 @@ includedir=@includedir@
 Name: Protocol library for FastALG
 Description: Application layer protocol parser for FastALG
 Version: @VERSION@
-Libs: -lfalgproto-0.1
+Libs: -L${libdir} -lfalgproto-0.1
 Cflags: -I${includedir}/falgproto-0.1
