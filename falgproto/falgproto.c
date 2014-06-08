@@ -14,31 +14,45 @@ struct proto_info {
     char*                   description;
     FalgprotoParamGetter    param_getter;
     FalgprotoPrinter        printer;
+    FalgprotoMatcher        matcher;
 };
+
+/* protocol implementation declaraion */
+FALGPROTO_PARAM_GETTER_DECL (dns);
+FALGPROTO_PRINTER_DECL (dns);
+
+/* matcher implementation declaraion */
+FALGPROTO_MATCHER_DECL (hostname);
 
 static struct proto_info info[] = {
     { FALGPROTO_TYPE_HTTP,      FALGPROTO_TRANSPORT_TCP,  "http",
       "HTTP",
       NULL,
+      NULL,
       NULL },
     { FALGPROTO_TYPE_HTTPS,     FALGPROTO_TRANSPORT_TCP,  "https",
       "HTTPS",
       NULL,
+      NULL,
       NULL },
     { FALGPROTO_TYPE_DNS,       FALGPROTO_TRANSPORT_UDP,  "dns",
       "DNS",
-      NULL,
-      NULL },
+      FALGPROTO_PARAM_GETTER_NAME (dns),
+      FALGPROTO_PRINTER_NAME (dns),
+      FALGPROTO_MATCHER_NAME (hostname) },
     { FALGPROTO_TYPE_FTP,       FALGPROTO_TRANSPORT_TCP,  "ftp",
       "FTP",
+      NULL,
       NULL,
       NULL },
     { FALGPROTO_TYPE_SSH,       FALGPROTO_TRANSPORT_TCP,  "ssh",
       "SSH",
       NULL,
+      NULL,
       NULL },
     { FALGPROTO_TYPE_LDAP,      FALGPROTO_TRANSPORT_TCP,  "ldap",
       "LDAP",
+      NULL,
       NULL,
       NULL },
     { FALGPROTO_TYPE_MAX,       0,  NULL,  NULL,  NULL,  NULL }
@@ -75,4 +89,8 @@ FalgprotoParamGetter falgproto_get_param_getter (FalgprotoType protocol) {
 
 FalgprotoPrinter falgproto_get_printer (FalgprotoType protocol) {
     return info[protocol].printer;
+}
+
+FalgprotoMatcher falgproto_get_matcher (FalgprotoType protocol) {
+    return info[protocol].matcher;
 }

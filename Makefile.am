@@ -9,8 +9,10 @@ EXTRA_DIST = \
 	$(NULL)
 
 falgproto_libfalgproto_0_1_la_SOURCES = \
-	falgproto/falgproto.h	\
-	falgproto/falgproto.c	\
+	falgproto/falgproto.h			\
+	falgproto/falgproto.c			\
+	falgproto/falgproto-protocol-dns.c	\
+	falgproto/falgproto-match-hostname.c	\
 	$(NULL)
 
 falgprotoincludedir = $(includedir)/falgproto-0.1
