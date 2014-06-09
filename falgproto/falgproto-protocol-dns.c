@@ -32,8 +32,8 @@ static inline ssize_t get_question_name (
     const char *pkt_s, size_t len, char *out_s) {
 
     /* String length are always unsigned. */
-    const unsigned char *pkt = pkt_s;
-    unsigned char *out = out_s;
+    const unsigned char *pkt = (const unsigned char*)pkt_s;
+    unsigned char *out = (unsigned char*)out_s;
 
     /* We assume get_question_count are called before this function, so
      * we don't get a malformed or truncated packet */
