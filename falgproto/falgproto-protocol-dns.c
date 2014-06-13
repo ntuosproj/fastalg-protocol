@@ -45,6 +45,9 @@ static inline ssize_t get_question_name (
                 out[j] = pkt[i];
             }
         }
+        if (i >= len) {
+            return -1;
+        }
         if (out != NULL) {
             if (pkt[i] != 0) {
                 out[j] = '.';
@@ -55,7 +58,6 @@ static inline ssize_t get_question_name (
     }
 
     if (pkt[i] != 0) {
-        printf ("%hhu %c\n", pkt[i], pkt[i]);
         return -1;
     }
 
