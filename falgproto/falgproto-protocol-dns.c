@@ -38,8 +38,33 @@ static inline ssize_t get_question_name (
 
     /* We assume get_question_count are called before this function, so
      * we don't get a malformed or truncated packet */
-    ssize_t i = 12, j = 0;
+    ssize_t i = 12, j = 0, out_len = 0;
+    bool in_pointer = false;
     for (; i < len && pkt[i] != 0; j++) {
+
+        /* Handle DNS name pointers, but this should not happen because this
+         * is the first name field in the entire packet */
+        if (pkt[i] > 63) {
+
+            /* DNS name pointer should not be nested */
+            if (in_pointer) {
+                return -1;
+            }
+
+            if (i + 1 >= len) {
+                return -1;
+            }
+
+            uint16_t next_label;
+            memcpy (&next_label, pkt + i, 2);
+
+            in_pointer = true;
+            i = ntohs (next_label) & ~(0xc000);
+            if (i >= len) {
+                return -1;
+            }
+        }
+
         unsigned int label_len = pkt[i];
         for (i++; i < len && label_len > 0; i++, j++, label_len--) {
             if (out != NULL) {
@@ -56,13 +81,15 @@ static inline ssize_t get_question_name (
                 out[j] = '\0';
             }
         }
+
+        out_len = j;
     }
 
     if (pkt[i] != 0) {
         return -1;
     }
 
-    return i - 12 - 1;
+    return out_len;
 }
 
 FALGPROTO_PARAM_GETTER_DECL (dns) {
