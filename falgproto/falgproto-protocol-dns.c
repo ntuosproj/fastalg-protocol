@@ -101,7 +101,7 @@ FALGPROTO_PARAM_GETTER_DECL (dns) {
 
     uint16_t question_count;
     if (get_question_count (payload, len, &question_count) < 0) {
-        return (FalgprotoParam) { .result = FALGPROTO_PARAM_RESULT_TRUNCATED };
+        return (FalgprotoParam) { .result = FALGPROTO_PARAM_RESULT_BAD_FORMAT };
     }
     if (question_count == 0) {
         return (FalgprotoParam) { .result = FALGPROTO_PARAM_RESULT_NOT_FOUND };
@@ -109,7 +109,7 @@ FALGPROTO_PARAM_GETTER_DECL (dns) {
 
     ssize_t question_name_len = get_question_name (payload, len, NULL);
     if (question_name_len < 0) {
-        return (FalgprotoParam) { .result = FALGPROTO_PARAM_RESULT_TRUNCATED };
+        return (FalgprotoParam) { .result = FALGPROTO_PARAM_RESULT_BAD_FORMAT };
     }
 
     char *question_name = malloc (question_name_len + 1);

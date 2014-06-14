@@ -34,10 +34,11 @@ typedef struct falgproto_param {
     int     result;     /* error code listed below */
 } FalgprotoParam;
 
-#define FALGPROTO_PARAM_RESULT_ERROR       -1
-#define FALGPROTO_PARAM_RESULT_OK           0
-#define FALGPROTO_PARAM_RESULT_NOT_FOUND    1
-#define FALGPROTO_PARAM_RESULT_TRUNCATED    2
+#define FALGPROTO_PARAM_RESULT_BAD_FORMAT  -3 /* ERROR: bad packet format */
+#define FALGPROTO_PARAM_RESULT_NOT_FOUND   -2 /* ERROR: param is missing */
+#define FALGPROTO_PARAM_RESULT_ERROR       -1 /* ERROR: internal system error */
+#define FALGPROTO_PARAM_RESULT_OK           0 /* param has successfully got */
+#define FALGPROTO_PARAM_RESULT_TRUNCATED    1 /* needs more data */
 
 typedef FalgprotoParam (*FalgprotoParamGetter) (FalgprotoPacket *pkt);
 typedef void     (*FalgprotoPrinter) (FILE *fp, FalgprotoPacket *pkt);
