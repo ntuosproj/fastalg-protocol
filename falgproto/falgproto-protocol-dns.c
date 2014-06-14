@@ -92,17 +92,22 @@ static inline ssize_t get_question_name (
     return out_len;
 }
 
+/* We only handle the first packet now, as it is not possible for the
+ * the question to exceed the 512 bytes limit. */
 FALGPROTO_PARAM_GETTER_DECL (dns) {
 
+    char *payload = pkt->payload;
+    size_t len = pkt->len;
+
     uint16_t question_count;
-    if (get_question_count (pkt, len, &question_count) < 0) {
+    if (get_question_count (payload, len, &question_count) < 0) {
         return (FalgprotoParam) { .result = FALGPROTO_PARAM_RESULT_TRUNCATED };
     }
     if (question_count == 0) {
         return (FalgprotoParam) { .result = FALGPROTO_PARAM_RESULT_NOT_FOUND };
     }
 
-    ssize_t question_name_len = get_question_name (pkt, len, NULL);
+    ssize_t question_name_len = get_question_name (payload, len, NULL);
     if (question_name_len < 0) {
         return (FalgprotoParam) { .result = FALGPROTO_PARAM_RESULT_TRUNCATED };
     }
@@ -112,7 +117,7 @@ FALGPROTO_PARAM_GETTER_DECL (dns) {
         return (FalgprotoParam) { .result = FALGPROTO_PARAM_RESULT_ERROR };
     }
 
-    get_question_name (pkt, len, question_name);
+    get_question_name (payload, len, question_name);
     return (FalgprotoParam) {
         .param   = question_name,
         .len     = question_name_len,
@@ -122,8 +127,11 @@ FALGPROTO_PARAM_GETTER_DECL (dns) {
 
 FALGPROTO_PRINTER_DECL (dns) {
 
+    char *payload = pkt->payload;
+    size_t len = pkt->len;
+
     uint16_t question_count;
-    if (get_question_count (pkt, len, &question_count) < 0) {
+    if (get_question_count (payload, len, &question_count) < 0) {
         fputs ("DNS: Cannot get question count\n", fp);
         return;
     }
@@ -134,14 +142,14 @@ FALGPROTO_PRINTER_DECL (dns) {
         return;
     }
 
-    ssize_t question_name_len = get_question_name (pkt, len, NULL);
+    ssize_t question_name_len = get_question_name (payload, len, NULL);
     if (question_name_len < 0) {
         fputs ("DNS: Malformed question name\n", fp);
         return;
     }
 
     char question_name[question_name_len + 1];
-    get_question_name (pkt, len, question_name);
+    get_question_name (payload, len, question_name);
     fputs ("DNS: Question name: ", fp);
     fputs (question_name, fp);
     fputc ('\n', fp);

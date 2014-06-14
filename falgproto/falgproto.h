@@ -20,11 +20,18 @@ typedef enum falgproto_transport {
     FALGPROTO_TRANSPORT_UDP
 } FalgprotoTransport;
 
+typedef struct falgproto_packet {
+    struct falgproto_packet* next;
+    void*   data;       /* unused (may be used by caller to store data) */
+    char*   payload;    /* packet payload */
+    size_t  len;        /* packet payload length */
+} FalgprotoPacket;
+
 typedef struct falgproto_param {
-    char*   param;
-    size_t  len;
-    bool    dup;
-    int     result;
+    char*   param;      /* parameter (may not be NULL-terminated) */
+    size_t  len;        /* parameter length */
+    bool    dup;        /* whether the parameter is malloc()-ed */
+    int     result;     /* error code listed below */
 } FalgprotoParam;
 
 #define FALGPROTO_PARAM_RESULT_ERROR       -1
@@ -32,17 +39,17 @@ typedef struct falgproto_param {
 #define FALGPROTO_PARAM_RESULT_NOT_FOUND    1
 #define FALGPROTO_PARAM_RESULT_TRUNCATED    2
 
-typedef FalgprotoParam (*FalgprotoParamGetter) (const char *pkt, size_t len);
-typedef void     (*FalgprotoPrinter) (FILE *fp, const char *pkt, size_t len);
+typedef FalgprotoParam (*FalgprotoParamGetter) (FalgprotoPacket *pkt);
+typedef void     (*FalgprotoPrinter) (FILE *fp, FalgprotoPacket *pkt);
 typedef bool     (*FalgprotoMatcher) (
     const char *big, size_t big_len, const char *little, size_t little_len);
 
 #define FALGPROTO_PARAM_GETTER_NAME(type)   falgproto_##type##_param_getter
 #define FALGPROTO_PARAM_GETTER_DECL(type) \
-    FalgprotoParam FALGPROTO_PARAM_GETTER_NAME(type)(const char *pkt, size_t len)
+    FalgprotoParam FALGPROTO_PARAM_GETTER_NAME(type)(FalgprotoPacket *pkt)
 #define FALGPROTO_PRINTER_NAME(type)        falgproto_##type##_printer
 #define FALGPROTO_PRINTER_DECL(type) \
-    void FALGPROTO_PRINTER_NAME(type)(FILE *fp, const char *pkt, size_t len)
+    void FALGPROTO_PRINTER_NAME(type)(FILE *fp, FalgprotoPacket *pkt)
 #define FALGPROTO_MATCHER_NAME(type)        falgproto_##type##_matcher
 #define FALGPROTO_MATCHER_DECL(type) \
     bool FALGPROTO_MATCHER_NAME(type) \
