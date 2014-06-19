@@ -55,7 +55,7 @@ static struct proto_info info[] = {
       NULL,
       NULL,
       NULL },
-    { FALGPROTO_TYPE_MAX,       0,  NULL,  NULL,  NULL,  NULL }
+    { FALGPROTO_TYPE_MAX,       0, NULL, NULL, NULL, NULL, NULL }
 };
 
 unsigned falgproto_get_count (void) {
