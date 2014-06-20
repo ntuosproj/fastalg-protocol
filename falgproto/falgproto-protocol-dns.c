@@ -38,7 +38,7 @@ static inline ssize_t get_question_name (
 
     /* We assume get_question_count are called before this function, so
      * we don't get a malformed or truncated packet */
-    ssize_t i = 12, j = 0, out_len = 0;
+    size_t i = 12, j = 0, out_len = 0;
     bool in_pointer = false;
     for (; i < len && pkt[i] != 0; j++) {
 
@@ -59,7 +59,7 @@ static inline ssize_t get_question_name (
             memcpy (&next_label, pkt + i, 2);
 
             in_pointer = true;
-            i = ntohs (next_label) & ~(0xc000);
+            i = (size_t)(ntohs (next_label) & ~(0xc000));
             if (i >= len) {
                 return -1;
             }
@@ -89,7 +89,7 @@ static inline ssize_t get_question_name (
         return -1;
     }
 
-    return out_len;
+    return (ssize_t)out_len;
 }
 
 /* We only handle the first packet now, as it is not possible for the
@@ -107,11 +107,12 @@ FALGPROTO_PARAM_GETTER_DECL (dns) {
         return (FalgprotoParam) { .result = FALGPROTO_PARAM_RESULT_NOT_FOUND };
     }
 
-    ssize_t question_name_len = get_question_name (payload, len, NULL);
-    if (question_name_len < 0) {
+    ssize_t question_name_rval = get_question_name (payload, len, NULL);
+    if (question_name_rval < 0) {
         return (FalgprotoParam) { .result = FALGPROTO_PARAM_RESULT_BAD_FORMAT };
     }
 
+    size_t question_name_len = (size_t)question_name_rval;
     char *question_name = malloc (question_name_len + 1);
     if (question_name == NULL) {
         return (FalgprotoParam) { .result = FALGPROTO_PARAM_RESULT_ERROR };
