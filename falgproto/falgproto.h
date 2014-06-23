@@ -22,9 +22,10 @@ typedef enum falgproto_transport {
 
 typedef struct falgproto_packet {
     struct falgproto_packet* next;
-    void*   data;       /* unused (may be used by caller to store data) */
     char*   payload;    /* packet payload */
     size_t  len;        /* packet payload length */
+    void*   state;      /* unused (may be used by callee to store data) */
+    void*   data;       /* unused (may be used by caller to store data) */
 } FalgprotoPacket;
 
 typedef struct falgproto_param {
