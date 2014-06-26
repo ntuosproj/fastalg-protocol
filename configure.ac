@@ -2,7 +2,9 @@
 # Process this file with autoconf to produce a configure script.
 # vim: set sw=4 ts=4 sts=4 et:
 
-AC_INIT([fastalg-protocol], [0.1.3], [BUG-REPORT-ADDRESS])
+AC_INIT([fastalg-protocol],
+        [m4_esyscmd([build-aux/git-version-gen .tarball-version])],
+        [BUG-REPORT-ADDRESS])
 AC_CONFIG_SRCDIR([falgproto/falgproto.c])
 AC_CONFIG_HEADERS([config.h])
 

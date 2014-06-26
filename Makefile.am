@@ -6,7 +6,15 @@ lib_LTLIBRARIES = falgproto/libfalgproto-0.1.la
 
 EXTRA_DIST = \
 	autogen.sh		\
+	$(top_srcdir)/.version	\
 	$(NULL)
+
+# For git-version-gen
+BUILT_SOURCES = $(top_srcdir)/.version
+$(top_srcdir)/.version:
+	echo $(VERSION) > $@-t && mv $@-t $@
+dist-hook:
+	echo $(VERSION) > $(distdir)/.tarball-version
 
 falgproto_libfalgproto_0_1_la_SOURCES = \
 	falgproto/falgproto.h			\
